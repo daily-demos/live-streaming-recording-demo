@@ -1,0 +1,22 @@
+.start-livestreaming {
+  background-color: var(--white);
+  border-radius: 8px;
+  font-size: 12px;
+  border: 1px solid var(--grey);
+  padding: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 800px;
+  z-index: 2;
+  text-align: center;
+}
+
+.start-livestreaming h2 {
+  color: var(--dark-blue);
+}
+
+.start-livestreaming button {
+  margin: 1rem;
+}
