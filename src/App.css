@@ -32,6 +32,10 @@ button {
   cursor: pointer;
   padding: 12px;
 }
+button.secondary {
+  background-color: var(--white);
+  border: solid 1px var(--dark-grey);
+}
 
 video {
   width: 100%;

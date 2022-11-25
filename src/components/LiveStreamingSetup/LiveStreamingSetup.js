@@ -79,8 +79,8 @@ export default function InviteParticipants({ toggleModal }) {
   };
 
   return (
-    <section className="start-livestreaming">
-      <h2>Start livestreaming</h2>
+    <section className="start-live-streaming">
+      <h2>Start live streaming</h2>
 
       {errorMsg && <p className="error-msg">{errorMsg}</p>}
 
@@ -100,7 +100,7 @@ export default function InviteParticipants({ toggleModal }) {
           </div>
           {provider === 'custom' ? (
             <div className="form-group">
-              <label htmlFor="rtmp-url">RTMP url</label>
+              <label htmlFor="rtmp-url">RTMP url (including stream key)</label>
               <input id="rtmp-url" type="text" />
             </div>
           ) : (
@@ -109,23 +109,10 @@ export default function InviteParticipants({ toggleModal }) {
               <input id="stream-key" type="text" />
             </div>
           )}
-          {!isRecording && (
-            <div className="form-group">
-              <input id="start-recording" type="checkbox" />
-              <label htmlFor="start-recording">Also start recording</label>
-            </div>
-          )}
         </>
       )}
       <div className="form-group">
         <label htmlFor="layout">Layout</label>
-        <p>
-          See{' '}
-          <a href="https://docs.daily.co/reference/daily-js/instance-methods/start-live-streaming#customize-your-video-layout">
-            the documentation
-          </a>{' '}
-          for details on each layout type.
-        </p>
         <select id="layout" defaultValue="default">
           <option value="default">default</option>
           <option value="active-participant">Active participant</option>
@@ -134,18 +121,31 @@ export default function InviteParticipants({ toggleModal }) {
           <option value="portrait-inset">Portrait (inset)</option>
           {/* <option value="custom">Custom</option> */}
         </select>
+        <p>
+          See{' '}
+          <a href="https://docs.daily.co/reference/daily-js/instance-methods/start-live-streaming#customize-your-video-layout">
+            the documentation
+          </a>{' '}
+          for details on each layout type.
+        </p>
       </div>
+      {!isRecording && !isLiveStreaming && (
+        <div className="form-group">
+          <input id="start-recording" type="checkbox" />
+          <label htmlFor="start-recording">Also start recording</label>
+        </div>
+      )}
 
       <div className="buttons">
-        <button type="button" className="close" onClick={toggleLiveStreaming}>
-          {isLiveStreaming ? 'Stop livestreaming' : 'Start livestreaming'}
+        <button type="button" onClick={toggleLiveStreaming}>
+          {isLiveStreaming ? 'Stop live streaming' : 'Start live streaming'}
         </button>
         {isLiveStreaming && (
-          <button type="button" className="close" onClick={updateLayout}>
+          <button type="button" onClick={updateLayout}>
             Update layout
           </button>
         )}
-        <button type="button" className="close" onClick={toggleModal}>
+        <button type="button" className="secondary" onClick={toggleModal}>
           Close window
         </button>
       </div>

@@ -93,7 +93,7 @@ export default function Tray({ leaveCall }) {
               </button>
               <button onClick={toggleLiveStreaming} type="button">
                 <Stream />
-                {isLiveStreaming ? 'Stop livestreaming' : 'Start livestreaming'}
+                {isLiveStreaming ? 'Stop live streaming' : 'Start live streaming'}
               </button>
               <button onClick={toggleRecording} type="button">
                 {isRecording ? <Circle /> : <Recording />}

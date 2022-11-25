@@ -9,7 +9,7 @@ export default function InviteParticipants({ toggleModal }) {
       <p className="url">
         <textarea>{`${window.location.href}&type=participant`}</textarea>
       </p>
-      <button type="button" className="close" onClick={toggleModal}>
+      <button type="button" className="secondary" onClick={toggleModal}>
         Close
       </button>
     </section>
