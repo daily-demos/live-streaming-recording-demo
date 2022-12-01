@@ -16,10 +16,11 @@ export default function Header() {
           <span>API docs</span>
           <img src="/images/newtab.svg" alt="New tab" />
         </a>
-        {
-          // TODO: Need to update this
-        }
-        <a className="github-link" href="need-to-update" target="_blank" rel="noreferrer">
+        <a
+          className="github-link"
+          href="https://github.com/daily-demos/live-streaming-recording-sample-app"
+          target="_blank"
+          rel="noreferrer">
           <img src="/images/github.svg" alt="Github" />
         </a>
       </div>
