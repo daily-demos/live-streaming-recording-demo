@@ -58,7 +58,7 @@ OR...
 
 If you want access to the Daily REST API (using the proxy as specified in `netlify.toml`), you can deploy your own copy of this repo with one click via Netlify:
 
-[![Deploy with Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/daily-demos/custom-video-daily-react-hooks)
+[![Deploy with Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/daily-demos/live-streaming-recording-sample-app)
 
 Note: You'll need your [Daily API key](https://dashboard.daily.co/developers) handy for this step.
 
