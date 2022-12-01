@@ -1,13 +1,27 @@
-import { useLiveStreaming, useRecording } from '@daily-co/daily-react';
+import {
+  useLiveStreaming,
+  useParticipant,
+  useParticipantIds,
+  useRecording,
+} from '@daily-co/daily-react';
 import React, { useState } from 'react';
 import './LiveStreamingSetup.css';
+
+function ParticipantOption({ participantId }) {
+  const participant = useParticipant(participantId);
+  return <option value={participantId}>{participant.user_name || participantId}</option>;
+}
 
 export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }) {
   const { startLiveStreaming, stopLiveStreaming, updateLiveStreaming, isLiveStreaming, errorMsg } =
     useLiveStreaming();
   const { startRecording, stopRecording, isRecording } = useRecording();
 
-  const [provider, setProvider] = useState('twitch');
+  const participantIds = useParticipantIds();
+
+  const [selectedProvider, setSelectedProvider] = useState('twitch');
+  const [selectedLayout, setSelectedLayout] = useState('default');
+  const [errorMessage, setErrorMessage] = useState(errorMsg);
 
   const rtmpUrls = {
     youtube: 'rtmp://a.rtmp.youtube.com/live2/',
@@ -19,7 +33,10 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
   };
 
   const changeProvider = (e) => {
-    setProvider(e.target.value);
+    setSelectedProvider(e.target.value);
+  };
+  const changeLayout = (e) => {
+    setSelectedLayout(e.target.value);
   };
 
   const getLayout = () => {
@@ -35,6 +52,21 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
           preset: 'portrait',
           variant: 'inset',
         };
+      case 'single-participant':
+        return {
+          preset: 'single-participant',
+          sessionId: document.getElementById('single-participant').value,
+        };
+      case 'custom':
+        try {
+          return {
+            preset: 'custom',
+            composition_params: JSON.parse(document.getElementById('custom').value),
+          };
+        } catch (e) {
+          setErrorMessage('Make sure the custom layout is a valid JSON object');
+          return false;
+        }
       default:
         return {
           preset: layoutType,
@@ -46,8 +78,13 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
     if (!isLiveStreaming) {
       return;
     }
+    const layout = getLayout();
+    if (!layout) {
+      return;
+    }
+
     updateLiveStreaming({
-      layout: getLayout(),
+      layout,
     });
   };
 
@@ -59,14 +96,16 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
     }
 
     let rtmpUrl;
-    if (provider === 'custom') {
+    if (selectedProvider === 'custom') {
       rtmpUrl = document.getElementById('rtmp-url').value;
     } else {
-      rtmpUrl = rtmpUrls[provider] + document.getElementById('stream-key').value;
+      rtmpUrl = rtmpUrls[selectedProvider] + document.getElementById('stream-key').value;
     }
 
     const layout = getLayout();
-
+    if (!layout) {
+      return;
+    }
     if (document.getElementById('start-recording').checked) {
       startRecording({
         layout,
@@ -82,7 +121,7 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
     <section className="start-live-streaming">
       <h2>Start live streaming</h2>
 
-      {errorMsg && <p className="error-msg">{errorMsg}</p>}
+      {errorMessage && <p className="error-msg">{errorMessage}</p>}
 
       {!isLiveStreaming && (
         <>
@@ -98,7 +137,7 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
               <option value="custom">Custom</option>
             </select>
           </div>
-          {provider === 'custom' ? (
+          {selectedProvider === 'custom' ? (
             <div className="form-group">
               <label htmlFor="rtmp-url">RTMP url (including stream key)</label>
               <input id="rtmp-url" type="text" />
@@ -113,13 +152,13 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
       )}
       <div className="form-group">
         <label htmlFor="layout">Layout</label>
-        <select id="layout" defaultValue="default">
+        <select id="layout" defaultValue="default" onChange={changeLayout}>
           <option value="default">default</option>
           <option value="active-participant">Active participant</option>
-          {/* <option value="single-participant">Single participant</option> */}
+          <option value="single-participant">Single participant</option>
           <option value="portrait-vertical">Portrait (vertical)</option>
           <option value="portrait-inset">Portrait (inset)</option>
-          {/* <option value="custom">Custom</option> */}
+          <option value="custom">Custom</option>
         </select>
         <p>
           See{' '}
@@ -129,6 +168,35 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
           for details on each layout type.
         </p>
       </div>
+      {selectedLayout === 'single-participant' && (
+        <div className="form-group">
+          <label htmlFor="single-participant">Participant to focus on</label>
+
+          <select id="single-participant">
+            {participantIds.map((id) => (
+              <ParticipantOption participantId={id} />
+            ))}
+          </select>
+        </div>
+      )}
+      {selectedLayout === 'custom' && (
+        <div className="form-group">
+          <label htmlFor="custom">Custom VCS layout</label>
+          <p>
+            To use this, head over to the{' '}
+            <a
+              href="https://www.daily.co/tools/vcs-simulator/daily_baseline.html"
+              target="_blank"
+              rel="noreferrer">
+              VCS simulator
+            </a>
+            , and use the API builder on the side. Copy the object within the{' '}
+            <code>composition_params</code> and paste it in the textarea below.
+          </p>
+
+          <textarea id="custom" />
+        </div>
+      )}
       {isRecordingSupported && !isRecording && !isLiveStreaming && (
         <div className="form-group">
           <input id="start-recording" type="checkbox" />
