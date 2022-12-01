@@ -6,7 +6,7 @@ This repository showcases some of Daily's live streaming and recording capabilit
 
 This app includes:
 
-- Local recording
+- Local recording (Chrome desktop only)
 - RTMP live streaming with multiple participants
 - Screen sharing
 - Different layouts, and changing them during recording/live streaming
