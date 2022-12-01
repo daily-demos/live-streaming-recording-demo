@@ -11,6 +11,7 @@ import {
 
 import InviteParticipants from '../InviteParticipants/InviteParticipants';
 import LiveStreamingSetup from '../LiveStreamingSetup/LiveStreamingSetup';
+import RecordingNotSupported from '../RecordingNotSupported/RecordingNotSupported';
 
 import './Tray.css';
 import {
@@ -27,7 +28,7 @@ import {
 } from './Icons';
 import { isParticipant } from '../../utils';
 
-export default function Tray({ leaveCall }) {
+export default function Tray({ leaveCall, isRecordingSupported }) {
   const callObject = useDaily();
   const { isSharingScreen, startScreenShare, stopScreenShare } = useScreenShare();
 
@@ -36,6 +37,7 @@ export default function Tray({ leaveCall }) {
 
   const [showInviteParticipants, setShowInviteParticipants] = useState(false);
   const [showLiveStreamingSetup, setShowLiveStreamingSetup] = useState(false);
+  const [showRecordingNotSupported, setShowRecordingNotSupported] = useState(false);
 
   const localParticipant = useLocalParticipant();
   const localVideo = useVideoTrack(localParticipant?.session_id);
@@ -53,20 +55,37 @@ export default function Tray({ leaveCall }) {
 
   const toggleScreenShare = () => (isSharingScreen ? stopScreenShare() : startScreenShare());
 
-  const toggleInviteParticipants = () => {
-    setShowInviteParticipants(!showInviteParticipants);
-  };
+  const toggleInviteParticipants = () => setShowInviteParticipants(!showInviteParticipants);
 
-  const toggleLiveStreaming = () => {
-    setShowLiveStreamingSetup(!showLiveStreamingSetup);
-  };
+  const toggleLiveStreaming = () => setShowLiveStreamingSetup(!showLiveStreamingSetup);
 
-  const toggleRecording = () => (isRecording ? stopRecording() : startRecording());
+  const toggleRecordingNotSupported = () =>
+    setShowRecordingNotSupported(!showRecordingNotSupported);
+
+  const toggleRecording = () => {
+    if (isRecordingSupported) {
+      if (isRecording) {
+        stopRecording();
+        return;
+      }
+      startRecording();
+      return;
+    }
+    toggleRecordingNotSupported();
+  };
 
   return (
     <div className="tray">
       {showInviteParticipants && <InviteParticipants toggleModal={toggleInviteParticipants} />}
-      {showLiveStreamingSetup && <LiveStreamingSetup toggleModal={toggleLiveStreaming} />}
+      {showLiveStreamingSetup && (
+        <LiveStreamingSetup
+          toggleModal={toggleLiveStreaming}
+          isRecordingSupported={isRecordingSupported}
+        />
+      )}
+      {showRecordingNotSupported && (
+        <RecordingNotSupported toggleModal={toggleRecordingNotSupported} />
+      )}
 
       <div className="tray-buttons-container">
         <div className="controls">

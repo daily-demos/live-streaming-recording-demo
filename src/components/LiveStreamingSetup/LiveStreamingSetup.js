@@ -2,7 +2,7 @@ import { useLiveStreaming, useRecording } from '@daily-co/daily-react';
 import React, { useState } from 'react';
 import './LiveStreamingSetup.css';
 
-export default function InviteParticipants({ toggleModal }) {
+export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }) {
   const { startLiveStreaming, stopLiveStreaming, updateLiveStreaming, isLiveStreaming, errorMsg } =
     useLiveStreaming();
   const { startRecording, stopRecording, isRecording } = useRecording();
@@ -129,7 +129,7 @@ export default function InviteParticipants({ toggleModal }) {
           for details on each layout type.
         </p>
       </div>
-      {!isRecording && !isLiveStreaming && (
+      {isRecordingSupported && !isRecording && !isLiveStreaming && (
         <div className="form-group">
           <input id="start-recording" type="checkbox" />
           <label htmlFor="start-recording">Also start recording</label>

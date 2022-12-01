@@ -168,6 +168,9 @@ export default function App() {
    * we can show the hair check UI. */
   const showHairCheck = !apiError && appState === STATE_HAIRCHECK;
 
+  const supportedBrowser = DailyIframe.supportedBrowser();
+  const isRecordingSupported = supportedBrowser.name === 'chrome' && !supportedBrowser.mobile;
+
   const renderApp = () => {
     // If something goes wrong with creating the room.
     if (apiError) {
@@ -200,7 +203,7 @@ export default function App() {
       return (
         <DailyProvider callObject={callObject}>
           <Call />
-          <Tray leaveCall={startLeavingCall} />
+          <Tray leaveCall={startLeavingCall} isRecordingSupported={isRecordingSupported} />
         </DailyProvider>
       );
     }
