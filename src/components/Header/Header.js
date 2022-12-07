@@ -5,7 +5,7 @@ export default function Header() {
     <header>
       <div className="header-section">
         <img src="/images/logo.svg" alt="Daily logo" />
-        <span className="title">Live streaming / recording sample app</span>
+        <span className="title">Live streaming / recording demo</span>
       </div>
       <div className="header-section">
         <a
@@ -18,7 +18,7 @@ export default function Header() {
         </a>
         <a
           className="github-link"
-          href="https://github.com/daily-demos/live-streaming-recording-sample-app"
+          href="https://github.com/daily-demos/live-streaming-recording-demo"
           target="_blank"
           rel="noreferrer">
           <img src="/images/github.svg" alt="Github" />

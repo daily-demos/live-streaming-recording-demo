@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   useLocalParticipant,
-  useVideoTrack,
   useDevices,
   useDaily,
   useDailyEvent,
@@ -13,10 +12,8 @@ import './HairCheck.css';
 
 export default function HairCheck({ joinCall, cancelCall }) {
   const localParticipant = useLocalParticipant();
-  const videoTrack = useVideoTrack(localParticipant?.session_id);
   const { microphones, cameras, setMicrophone, setCamera } = useDevices();
   const callObject = useDaily();
-  const videoElement = useRef();
 
   const [getUserMediaError, setGetUserMediaError] = useState(false);
 
@@ -36,14 +33,6 @@ export default function HairCheck({ joinCall, cancelCall }) {
     joinCall();
   };
 
-  useEffect(() => {
-    if (!videoTrack.persistentTrack) return;
-    if (videoElement?.current) {
-      videoElement.current.srcObject =
-        videoTrack.persistentTrack && new MediaStream([videoTrack?.persistentTrack]);
-    }
-  }, [videoTrack.persistentTrack]);
-
   const updateMicrophone = (e) => {
     setMicrophone(e.target.value);
   };
@@ -58,7 +47,9 @@ export default function HairCheck({ joinCall, cancelCall }) {
     <form className="hair-check" onSubmit={join}>
       <h1>Setup your hardware</h1>
       {/* Video preview */}
-      {localParticipant && <DailyVideo sessionId={localParticipant.session_id} mirror />}
+      {localParticipant && (
+        <DailyVideo sessionId={localParticipant.session_id} mirror />
+      )}
 
       {/* Username */}
       <div>
@@ -77,7 +68,9 @@ export default function HairCheck({ joinCall, cancelCall }) {
         <label htmlFor="micOptions">Microphone:</label>
         <select name="micOptions" id="micSelect" onChange={updateMicrophone}>
           {microphones?.map((mic) => (
-            <option key={`mic-${mic.device.deviceId}`} value={mic.device.deviceId}>
+            <option
+              key={`mic-${mic.device.deviceId}`}
+              value={mic.device.deviceId}>
               {mic.device.label}
             </option>
           ))}
@@ -89,7 +82,9 @@ export default function HairCheck({ joinCall, cancelCall }) {
         <label htmlFor="cameraOptions">Camera:</label>
         <select name="cameraOptions" id="cameraSelect" onChange={updateCamera}>
           {cameras?.map((camera) => (
-            <option key={`cam-${camera.device.deviceId}`} value={camera.device.deviceId}>
+            <option
+              key={`cam-${camera.device.deviceId}`}
+              value={camera.device.deviceId}>
               {camera.device.label}
             </option>
           ))}

@@ -10,7 +10,7 @@ export default function HomeScreen({ createCall, startHairCheck }) {
 
   return (
     <div className="home-screen">
-      <h1>React Daily Hooks custom video app</h1>
+      <h1>Daily live streaming and recording demo</h1>
       <p>Start the demo with a new unique room by clicking the button below.</p>
       <button onClick={startDemo} type="button">
         Click to start a call

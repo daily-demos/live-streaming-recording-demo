@@ -30,14 +30,16 @@ import { isParticipant } from '../../utils';
 
 export default function Tray({ leaveCall, isRecordingSupported }) {
   const callObject = useDaily();
-  const { isSharingScreen, startScreenShare, stopScreenShare } = useScreenShare();
+  const { isSharingScreen, startScreenShare, stopScreenShare } =
+    useScreenShare();
 
   const { isLiveStreaming } = useLiveStreaming();
   const { isRecording, startRecording, stopRecording } = useRecording();
 
   const [showInviteParticipants, setShowInviteParticipants] = useState(false);
   const [showLiveStreamingSetup, setShowLiveStreamingSetup] = useState(false);
-  const [showRecordingNotSupported, setShowRecordingNotSupported] = useState(false);
+  const [showRecordingNotSupported, setShowRecordingNotSupported] =
+    useState(false);
 
   const localParticipant = useLocalParticipant();
   const localVideo = useVideoTrack(localParticipant?.session_id);
@@ -53,30 +55,35 @@ export default function Tray({ leaveCall, isRecordingSupported }) {
     callObject.setLocalAudio(mutedAudio);
   }, [callObject, mutedAudio]);
 
-  const toggleScreenShare = () => (isSharingScreen ? stopScreenShare() : startScreenShare());
+  const toggleScreenShare = () =>
+    isSharingScreen ? stopScreenShare() : startScreenShare();
 
-  const toggleInviteParticipants = () => setShowInviteParticipants(!showInviteParticipants);
+  const toggleInviteParticipants = () =>
+    setShowInviteParticipants(!showInviteParticipants);
 
-  const toggleLiveStreaming = () => setShowLiveStreamingSetup(!showLiveStreamingSetup);
+  const toggleLiveStreaming = () =>
+    setShowLiveStreamingSetup(!showLiveStreamingSetup);
 
   const toggleRecordingNotSupported = () =>
     setShowRecordingNotSupported(!showRecordingNotSupported);
 
   const toggleRecording = () => {
-    if (isRecordingSupported) {
-      if (isRecording) {
-        stopRecording();
-        return;
-      }
-      startRecording();
+    if (!isRecordingSupported) {
+      toggleRecordingNotSupported();
       return;
     }
-    toggleRecordingNotSupported();
+    if (isRecording) {
+      stopRecording();
+      return;
+    }
+    startRecording();
   };
 
   return (
     <div className="tray">
-      {showInviteParticipants && <InviteParticipants toggleModal={toggleInviteParticipants} />}
+      {showInviteParticipants && (
+        <InviteParticipants toggleModal={toggleInviteParticipants} />
+      )}
       {showLiveStreamingSetup && (
         <LiveStreamingSetup
           toggleModal={toggleLiveStreaming}
@@ -90,12 +97,26 @@ export default function Tray({ leaveCall, isRecordingSupported }) {
       <div className="tray-buttons-container">
         <div className="controls">
           <button onClick={toggleVideo} type="button">
-            {mutedVideo ? <CameraOff /> : <CameraOn />}
-            {mutedVideo ? 'Turn camera on' : 'Turn camera off'}
+            {mutedVideo ? (
+              <>
+                <CameraOff /> Turn camera on
+              </>
+            ) : (
+              <>
+                <CameraOn /> Turn camera off
+              </>
+            )}
           </button>
           <button onClick={toggleAudio} type="button">
-            {mutedAudio ? <MicrophoneOff /> : <MicrophoneOn />}
-            {mutedAudio ? 'Unmute mic' : 'Mute mic'}
+            {mutedAudio ? (
+              <>
+                <MicrophoneOff /> Unmute mic
+              </>
+            ) : (
+              <>
+                <MicrophoneOn /> Mute mic
+              </>
+            )}
           </button>
         </div>
         <div className="actions">
@@ -112,7 +133,9 @@ export default function Tray({ leaveCall, isRecordingSupported }) {
               </button>
               <button onClick={toggleLiveStreaming} type="button">
                 <Stream />
-                {isLiveStreaming ? 'Stop live streaming' : 'Start live streaming'}
+                {isLiveStreaming
+                  ? 'Stop live streaming'
+                  : 'Start live streaming'}
               </button>
               <button onClick={toggleRecording} type="button">
                 {isRecording ? <Circle /> : <Recording />}

@@ -9,28 +9,96 @@ import './LiveStreamingSetup.css';
 
 function ParticipantOption({ participantId }) {
   const participant = useParticipant(participantId);
-  return <option value={participantId}>{participant.user_name || participantId}</option>;
+  return (
+    <option value={participantId}>
+      {participant.user_name || participantId}
+    </option>
+  );
 }
 
-export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }) {
-  const { startLiveStreaming, stopLiveStreaming, updateLiveStreaming, isLiveStreaming, errorMsg } =
-    useLiveStreaming();
+export default function LiveStreamingSetup({
+  toggleModal,
+  isRecordingSupported,
+}) {
+  const {
+    startLiveStreaming,
+    stopLiveStreaming,
+    updateLiveStreaming,
+    isLiveStreaming,
+    errorMsg,
+  } = useLiveStreaming();
   const { startRecording, stopRecording, isRecording } = useRecording();
 
   const participantIds = useParticipantIds();
 
-  const [selectedProvider, setSelectedProvider] = useState('twitch');
-  const [selectedLayout, setSelectedLayout] = useState('default');
-  const [errorMessage, setErrorMessage] = useState(errorMsg);
-
-  const rtmpUrls = {
-    youtube: 'rtmp://a.rtmp.youtube.com/live2/',
-    facebook: 'rtmps://live-api-s.facebook/com:443/rtmp/',
-    cloudflare: 'rtmps://live.cloudflare.com:443/live/',
-    mux: 'rtmps://global-live.mux.com:443/app/',
-    twitch: 'rtmp://ams02.contribute.live-video.net/app/',
-    vimeo: 'rtmps://rtmp-global.cloud.vimeo.com:443/live/',
+  const providers = {
+    twitch: {
+      name: 'Twitch',
+      value: 'twitch',
+      url: 'rtmp://ams02.contribute.live-video.net/app/',
+    },
+    facebook: {
+      name: 'Facebook',
+      value: 'facebook',
+      url: 'rtmps://live-api-s.facebook/com:443/rtmp/',
+    },
+    youtube: {
+      name: 'YouTube',
+      value: 'youtube',
+      url: 'rtmp://a.rtmp.youtube.com/live2/',
+    },
+    vimeo: {
+      name: 'Vimeo',
+      value: 'vimeo',
+      url: 'rtmps://rtmp-global.cloud.vimeo.com:443/live/',
+    },
+    mux: {
+      name: 'Mux',
+      value: 'mux',
+      url: 'rtmps://global-live.mux.com:443/app/',
+    },
+    cloudflare: {
+      name: 'Cloudflare',
+      value: 'cloudflare',
+      url: 'rtmps://live.cloudflare.com:443/live/',
+    },
+    custom: {
+      name: 'Custom',
+      value: 'custom',
+    },
   };
+  const layouts = {
+    default: {
+      name: 'Default',
+      value: 'default',
+    },
+    activeParticipant: {
+      name: 'Active participant',
+      value: 'active-participant',
+    },
+    singleParticipant: {
+      name: 'Single participant',
+      value: 'single-participant',
+    },
+    portraitVertical: {
+      name: 'Portrait (vertical)',
+      value: 'portrait-vertical',
+    },
+    portraitInset: {
+      name: 'Portrait (inset)',
+      value: 'portrait-inset',
+    },
+    custom: {
+      name: 'Custom',
+      value: 'custom',
+    },
+  };
+
+  const [selectedProvider, setSelectedProvider] = useState(
+    providers.twitch.value,
+  );
+  const [selectedLayout, setSelectedLayout] = useState(layouts.default.value);
+  const [errorMessage, setErrorMessage] = useState(errorMsg);
 
   const changeProvider = (e) => {
     setSelectedProvider(e.target.value);
@@ -42,26 +110,28 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
   const getLayout = () => {
     const layoutType = document.getElementById('layout').value;
     switch (layoutType) {
-      case 'portrait-vertical':
+      case layouts.portraitVertical.value:
         return {
           preset: 'portrait',
           variant: 'vertical',
         };
-      case 'portrait-inset':
+      case layouts.portraitInset.value:
         return {
           preset: 'portrait',
           variant: 'inset',
         };
-      case 'single-participant':
+      case layouts.singleParticipant.value:
         return {
-          preset: 'single-participant',
+          preset: layouts.singleParticipant.value,
           sessionId: document.getElementById('single-participant').value,
         };
-      case 'custom':
+      case layouts.custom.value:
         try {
           return {
-            preset: 'custom',
-            composition_params: JSON.parse(document.getElementById('custom').value),
+            preset: layouts.custom.value,
+            composition_params: JSON.parse(
+              document.getElementById('custom').value,
+            ),
           };
         } catch (e) {
           setErrorMessage('Make sure the custom layout is a valid JSON object');
@@ -96,10 +166,12 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
     }
 
     let rtmpUrl;
-    if (selectedProvider === 'custom') {
+    if (selectedProvider === providers.custom.value) {
       rtmpUrl = document.getElementById('rtmp-url').value;
     } else {
-      rtmpUrl = rtmpUrls[selectedProvider] + document.getElementById('stream-key').value;
+      rtmpUrl =
+        providers[selectedProvider].url +
+        document.getElementById('stream-key').value;
     }
 
     const layout = getLayout();
@@ -127,19 +199,20 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
         <>
           <div className="form-group">
             <label htmlFor="provider">Provider</label>
-            <select id="provider" defaultValue="twitch" onChange={changeProvider}>
-              <option value="twitch">Twitch</option>
-              <option value="facebook">Facebook</option>
-              <option value="youtube">YouTube</option>
-              <option value="vimeo">Vimeo</option>
-              <option value="mux">Mux</option>
-              <option value="cloudflare">Cloudflare</option>
-              <option value="custom">Custom</option>
+            <select
+              id="provider"
+              defaultValue="twitch"
+              onChange={changeProvider}>
+              {Object.values(providers).map(({ name, value }) => (
+                <option value={value} key={value}>
+                  {name}
+                </option>
+              ))}
             </select>
           </div>
-          {selectedProvider === 'custom' ? (
+          {selectedProvider === providers.custom.value ? (
             <div className="form-group">
-              <label htmlFor="rtmp-url">RTMP url (including stream key)</label>
+              <label htmlFor="rtmp-url">RTMP URL (including stream key)</label>
               <input id="rtmp-url" type="text" />
             </div>
           ) : (
@@ -153,12 +226,11 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
       <div className="form-group">
         <label htmlFor="layout">Layout</label>
         <select id="layout" defaultValue="default" onChange={changeLayout}>
-          <option value="default">default</option>
-          <option value="active-participant">Active participant</option>
-          <option value="single-participant">Single participant</option>
-          <option value="portrait-vertical">Portrait (vertical)</option>
-          <option value="portrait-inset">Portrait (inset)</option>
-          <option value="custom">Custom</option>
+          {Object.values(layouts).map(({ name, value }) => (
+            <option value={value} key={value}>
+              {name}
+            </option>
+          ))}
         </select>
         <p>
           See{' '}
@@ -168,7 +240,7 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
           for details on each layout type.
         </p>
       </div>
-      {selectedLayout === 'single-participant' && (
+      {selectedLayout === layouts.singleParticipant.value && (
         <div className="form-group">
           <label htmlFor="single-participant">Participant to focus on</label>
 
@@ -179,7 +251,7 @@ export default function LiveStreamingSetup({ toggleModal, isRecordingSupported }
           </select>
         </div>
       )}
-      {selectedLayout === 'custom' && (
+      {selectedLayout === layouts.custom.value && (
         <div className="form-group">
           <label htmlFor="custom">Custom VCS layout</label>
           <p>
