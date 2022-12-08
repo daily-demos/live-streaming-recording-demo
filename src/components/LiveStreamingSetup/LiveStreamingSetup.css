@@ -1,0 +1,64 @@
+.start-live-streaming {
+  background-color: var(--white);
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid var(--grey);
+  padding: 1rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 400px;
+  z-index: 2;
+  text-align: left;
+}
+
+.start-live-streaming p {
+  text-align: left;
+}
+
+.start-live-streaming h2 {
+  color: var(--dark-blue);
+  margin-top: 0;
+}
+
+.start-live-streaming button {
+  margin: 0.5rem 0;
+}
+.start-live-streaming button + button {
+  margin-left: 1rem;
+}
+.start-live-streaming label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.2rem;
+}
+
+.start-live-streaming input[type='text'],
+.start-live-streaming select {
+  width: 100%;
+  height: 28px;
+}
+.start-live-streaming .form-group {
+  margin: 0.5rem 0;
+}
+.start-live-streaming .form-group p {
+  margin: 0.25rem 0 0.75rem 0;
+  font-size: 12px;
+}
+.start-live-streaming [type='checkbox'] + label {
+  display: inline-block;
+  font-weight: normal;
+  margin-left: 0.25rem;
+}
+
+.start-live-streaming .error-msg {
+  color: var(--red-dark);
+  margin: 1rem 0;
+}
+
+.start-live-streaming textarea {
+  width: 100%;
+  height: 6rem;
+  resize: none;
+}
